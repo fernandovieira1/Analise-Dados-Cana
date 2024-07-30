@@ -1,0 +1,88 @@
+# ARQUIVOS
+
+@ Pasta, Diretório, Local
+* Planilha
+/ Comentários
+= Coluna
+
+--------------------
+@ Usina da Pedra
+--------------------
+
+Dados (1) (3).xlsx
+--------------------
+- 5 planilhas:
+
+    * Recorte do Trabalho
+          / Os últimos 10 anos de produção foram analisados, com foco na área do parceiro e na coleta de dados gerais da empresa 
+          para o traçamento do perfil ao longo dos meses de colheita. Os preços do Consecana foram examinados para compreender o comportamento dos 
+          preços, e dados regionais foram utilizados para comparar com o movimento em outras usinas.
+
+    * Produção
+        = Ano: dados para as safras 2012 até 2022
+        = Talhão: um código que identifique o talhão ao longo dos anos 
+        = Área: área do talhão em ha
+        = Parceiro: um código que identifique o parceiro
+        = Variedade: Variedade de cana plantada no talhão
+        = Produção: Produção em toneldas de cana no talhão. 
+        = ATR: ATR por tonelada de cana do talhão
+        = ATR Médio: O ATR médio final da safra
+        = Mês da Colheita: Mês em que ocorreu a colheita do talhão. 
+        = Forma de pagamento: Forma em contrato do pagamento do parceiro. Se referir, pode colocar em outra planilha. 
+        Se a forma for sempre a mesma, basta apenas uma única especificação. 
+
+    * ATR
+        = Ano: Ano da safra 2012 até 2022
+        = Área Colhida: Área total colhida (própria, terceiros e parceiros....)
+        = Produção: Total de toneladas colhida no mês
+        = Produtividade: Produtividade média por ha
+        = ATR por ha: ATR médio kg/ton de cana no mês de referência
+        = Moagem Industria: Toneladas moída de cana na indústria no mês de referência
+
+    * Consecana
+        = Ano	
+        = Mês	
+        = Mensal (R$/Kg ATR)	
+        = Acumulado (R$/Kg ATR) 	
+        = Campo R$/ton	
+        = Esteira R$/ton
+ 
+    * Preço Consecana:
+        = Ano	
+        = Mês	
+        = Mensal (R$/Kg ATR)	
+        = Acumulado (R$/Kg ATR) 
+        = Campo R$/ton	
+        = Esteira R$/ton
+ 
+ Historico ATR 2016 - 2023.xlsx
+ --------------------------------
+ - 1 planilha:
+
+     * ATR HISTORICO
+         / Histórico de ATR ( kg por tonelada de cana ) das usinas Pedra, Buriti, Ipê e Cedro.
+         / Dados mensais de 2016 a 2023.
+
+Historico de encerrados 2016 - 2023.xlsx
+------------------------------------------
+
+ - 1 planilha:
+
+     * BASE_2016_2023
+         / Dados de produção, colheita, parceiros e produtividade.
+         / Usinas Pedra, Buriti, Ipê e Cedro.
+         / Dados mensais de 2016 a 2023.
+    / Analisado em 'producao_cana.ipynb'.
+
+
+
+Historico de Moagem 2016 - 2023.xlsx
+--------------------------------------
+
+ - 1 planilha:
+
+     * Base de Dados
+         / Dados da cana transformada/moída - origem, qualidade, produção e transporte
+         / Usinas Pedra, Buriti, Ipê e Cedro.
+         / Dados mensais de 2016 a 2023.
+    / Analisado em 'moagem_cana.ipynb'.
