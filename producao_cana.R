@@ -143,3 +143,4 @@ ggplot(df, aes(x = KG_ATR)) +
 ggplot(df, aes(y = KG_ATR)) +
   geom_boxplot(fill = 'pink', alpha = 0.7)
 
+# config cloud
