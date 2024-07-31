@@ -2,22 +2,24 @@
 # 0.1 Carregar pacotes necessários ####
 library(readxl)
 library(tidyverse)
+library(googledrive)
+#drive_auth()
 
-# 0.2 Definir diretório de trabalho (local) ####
-setwd('/cloud/project')
-dados <- 'Historico de encerrados 2016 - 2023.xlsx'
+# ID do arquivo no Google Drive (extraído do link)
+file_id <- "13iRzte02t6sh89sCWj4N7D5Y4GBzbEZI"
 
+# Baixar o arquivo e salvar localmente
+drive_download(as_id(file_id), path = "arquivo.xlsx", overwrite = TRUE)
+2
 # 0.3 Importar dados e Criar df ####
-df <- read_excel(dados, skip = 1)
+df <- read_excel('arquivo.xlsx', 
+                 skip = 1,
+                 sheet = 'BASE_2016_2023')
 df <- df %>% select(-c('LAYER MAPA', 'VATR SAFRA', 'NM', 'Layer safra seção'))
 
 #### 1. FORMATAR DF ####
 
-# 1.1 Formatar colunas ####
-df$SAFRA <- as.Date(as.character(df$SAFRA), format = "%Y")
-df$TON_HA <- as.double(as.character(df$SAFRA))
-
-# 1.2 Renomear colunas ####
+# 1.1 Renomear colunas ####
 names(df)
 df <- df %>% rename(COD = CÓD,
                     SECAO = SEÇÃO,
@@ -32,10 +34,23 @@ df <- df %>% rename(COD = CÓD,
                     TON_HA = `TON/HÁ`,
                     KG_ATR = `KG ATR`)
 
+# 1.2 Formatar colunas ####
+df$SAFRA <- as.Date(as.character(df$SAFRA), format = "%Y")
+df$TALHAO <- as.factor(df$TALHAO)
+df$ESTAGIO <- as.factor(df$ESTAGIO)
+df$CORTE <- as.factor(df$CORTE)
+df$VARIEDADE <- as.factor(df$VARIEDADE)
+df$MES_COLHEITA<- as.factor(df$MES_COLHEITA)
+# df$TON_HA <- as.double(as.character(df$SAFRA))
 ## Consertar TON_HA
                     
-# Visualizar primeiros dados
+# 1.3 Visão preliminar via do df
+# Inicio e fim
 head(df)
+tail(df)
+
+# Checar se as colunas estão bem formatadas
+str(df) # PAREI AQUI
 
 # Resumo das variáveis de interesse
 summary(df)
