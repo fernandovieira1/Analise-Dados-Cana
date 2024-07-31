@@ -1,21 +1,23 @@
-#### 0. Configurar o ambiente ####
-# Carregar pacotes necessários
+#### 0. CONFIGURAR O AMBIENTE ####
+# 0.1 Carregar pacotes necessários ####
 library(readxl)
 library(tidyverse)
 
-# Definir diretório de trabalho (local)
-d_usina <- 'C://Users/ferna/OneDrive//5. Trabalho//Expediente//Ativos//Consultoria//Usina Pedra//Docs Nicolella//4-Dados e documentos//Dados//Usina da Pedra'
+# 0.2 Definir diretório de trabalho (local) ####
+setwd('/cloud/project')
+dados <- 'Historico de encerrados 2016 - 2023.xlsx'
 
-#### 0. Importar os dados e Criar o df ####
-# Importar dados
-df <- read_excel(file.path(d_usina, 'Historico de encerrados 2016 - 2023.xlsx'), sheet = 'BASE_2016_2023', skip = 1)
+# 0.3 Importar dados e Criar df ####
+df <- read_excel(dados, skip = 1)
 df <- df %>% select(-c('LAYER MAPA', 'VATR SAFRA', 'NM', 'Layer safra seção'))
 
-# Formatar colunas
+#### 1. FORMATAR DF ####
+
+# 1.1 Formatar colunas ####
 df$SAFRA <- as.Date(as.character(df$SAFRA), format = "%Y")
 df$TON_HA <- as.double(as.character(df$SAFRA))
 
-# Renomear colunas
+# 1.2 Renomear colunas ####
 names(df)
 df <- df %>% rename(COD = CÓD,
                     SECAO = SEÇÃO,
