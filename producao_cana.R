@@ -1,3 +1,4 @@
+#### 0. Configurar o ambiente ####
 # Carregar pacotes necessários
 library(readxl)
 library(tidyverse)
@@ -5,12 +6,14 @@ library(tidyverse)
 # Definir diretório de trabalho (local)
 d_usina <- 'C://Users/ferna/OneDrive//5. Trabalho//Expediente//Ativos//Consultoria//Usina Pedra//Docs Nicolella//4-Dados e documentos//Dados//Usina da Pedra'
 
+#### 0. Importar os dados e Criar o df ####
 # Importar dados
 df <- read_excel(file.path(d_usina, 'Historico de encerrados 2016 - 2023.xlsx'), sheet = 'BASE_2016_2023', skip = 1)
 df <- df %>% select(-c('LAYER MAPA', 'VATR SAFRA', 'NM', 'Layer safra seção'))
 
-# Transformar coluna SAFRA para data
+# Formatar colunas
 df$SAFRA <- as.Date(as.character(df$SAFRA), format = "%Y")
+df$TON_HA <- as.double(as.character(df$SAFRA))
 
 # Renomear colunas
 names(df)
@@ -26,6 +29,8 @@ df <- df %>% rename(COD = CÓD,
                     MES_COLHEITA = `MÊS DE COLHEITA`,
                     TON_HA = `TON/HÁ`,
                     KG_ATR = `KG ATR`)
+
+## Consertar TON_HA
                     
 # Visualizar primeiros dados
 head(df)
@@ -45,7 +50,8 @@ df %>%
 # Histograma e boxplot de TCH REAL
 ggplot(df, aes(x = TCH_REAL)) +
   geom_histogram(bins = 50, fill = 'blue', alpha = 0.7) +
-  geom_density(color = 'red')
+  geom_density(color = 'red') +
+  xlim(0, 250)
 
 ggplot(df, aes(y = TCH_REAL)) +
   geom_boxplot(fill = 'blue', alpha = 0.7)
