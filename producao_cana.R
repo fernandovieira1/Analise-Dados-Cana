@@ -34,26 +34,184 @@ df <- df %>% rename(COD = CÓD,
                     TON_HA = `TON/HÁ`,
                     KG_ATR = `KG ATR`)
 
-# 1.2 Formatar colunas ####
+# 
+
+
+# 1.2 Remover linhas com texto (chr) da coluna TON_HA ####
+# - A coluna está toda em texto, mas alguns valores claramente são números.
+# Precisamos decobrir quais são de fato character.
+df %>%
+  group_by(TON_HA) %>%
+  summarise(frequencia = n()) %>% View()
+# Há 4 valores, todos começando com a letra 'p'.
+
+nrow(df) # antes da exclusão dos iniciados em p em TON_HA
+
+df <- df %>%
+  filter(!grepl('^p', TON_HA, ignore.case = TRUE))
+
+nrow(df) # após a exclusão dos iniciados em p em TON_HA
+
+# 1.3 Formatar colunas ####
 df$SAFRA <- as.Date(as.character(df$SAFRA), format = "%Y")
+df$TIPO <- as.factor(df$TIPO)
+df$COD <- as.factor(df$COD)
 df$TALHAO <- as.factor(df$TALHAO)
 df$ESTAGIO <- as.factor(df$ESTAGIO)
 df$CORTE <- as.factor(df$CORTE)
 df$VARIEDADE <- as.factor(df$VARIEDADE)
-df$MES_COLHEITA<- as.factor(df$MES_COLHEITA)
-# df$TON_HA <- as.double(as.character(df$SAFRA))
-## Consertar TON_HA
+df$MES_COLHEITA <- as.factor(df$MES_COLHEITA)
+df$TON_HA <- as.double(df$TON_HA)
                     
-# 1.3 Visão preliminar via do df
-# Inicio e fim
+# 1.3 Checar se as colunas estão bem formatadas
+str(df)
+
+#### 2. VISÃO PRELIMINAR ####
 head(df)
+
+# 2. Visão preliminar ####
+# (Q): quantitativo
+# (C): categórico
+
+# (Q) SAFRA: Ano da safra
+# (C) UNIDADE: Nome do local da produção/colheita
+# (C) TIPO: Tipo de contrato
+# (C) COD: Código da unidade de beneficiamento
+# (C) SECAO: Unidade de beneficiamento
+# (C) TALHAO: Porção de terra onde a cana foi plantada
+# (Q) AREA: Tamanho da área plantada (ha)
+# (C) ESTAGIO: (???)
+# (C) CORTE: (???)
+# (C) VARIEDADE: variedade genética da cana
+# (Q) PRODUCAO_REAL: total colheita (kg)
+# (Q) TCH_REAL: Tonelada de cana por hectare (kg)
+# (Q) ATR: Açúcar Total Recuperável (kg)
+# (Q) ATR_PRODUCAO: (PRODUÇÃO REAL*ATR) (kg)
+# (Q) DATA_COLHEITA: AE
+# (C) MES_COLHEITA: AE
+# (C) PARCEIRO: Nome do produtor parceiro
+# (Q) TON_HA: (???) ==> muitos valores repetidos
+# (Q) KG_ATR: (???) ==> muitos valores repetidos
+
 tail(df)
 
-# Checar se as colunas estão bem formatadas
-str(df) # PAREI AQUI
+#### 3. AED ####
+# 3.1 Dados categóricos ####
 
-# Resumo das variáveis de interesse
-summary(df)
+## 1. UNIDADE: Nome do local da produção/colheita
+## 2. TIPO: Tipo de contrato (Parceria ou Arrendamento)
+## 3. COD: Código da unidade de beneficiamento
+## 4. SECAO: Unidade de beneficiamento
+## 5. TALHAO: Porção de terra onde a cana foi plantada
+## 6. ESTAGIO: (???)
+## 7. CORTE: (???)
+## 8. VARIEDADE: variedade genética da cana
+## 9. MES_COLHEITA: AE
+## 10. PARCEIRO: Nome do produtor parceiro
+
+## 1. UNIDADE
+# Qtde
+df %>%
+  count(UNIDADE)
+
+# %
+df %>%
+  count(UNIDADE) %>%
+  mutate(proporcao = n / sum(n))
+
+## 2. TIPO
+# Qtde
+df %>%
+  count(TIPO)
+
+# %
+df %>%
+  count(TIPO) %>%
+  mutate(proporcao = n / sum(n))
+
+## 3. COD
+# Qtde
+df %>%
+  count(COD)
+
+# %
+df %>%
+  count(COD) %>%
+  mutate(proporcao = n / sum(n))
+
+## 4. SECAO
+# Qtde
+df %>%
+  count(SECAO)
+
+# %
+df %>%
+  count(SECAO) %>%
+  mutate(proporcao = n / sum(n))
+
+## 5. TALHAO
+# Qtde
+df %>%
+  count(TALHAO)
+
+# %
+df %>%
+  count(TALHAO) %>%
+  mutate(proporcao = n / sum(n))
+
+## 6. ESTAGIO
+# Qtde
+df %>%
+  count(ESTAGIO)
+
+# %
+df %>%
+  count(ESTAGIO) %>%
+  mutate(proporcao = n / sum(n))
+
+## 7. CORTE
+# Qtde
+df %>%
+  count(CORTE)
+
+# %
+df %>%
+  count(CORTE) %>%
+  mutate(proporcao = n / sum(n))
+
+## 8. VARIEDADE
+# Qtde
+df %>%
+  count(VARIEDADE)
+
+# %
+df %>%
+  count(VARIEDADE) %>%
+  mutate(proporcao = n / sum(n))
+
+## 9. MES_COLHEITA
+# Qtde
+df %>%
+  count(MES_COLHEITA)
+
+# %
+df %>%
+  count(MES_COLHEITA) %>%
+  mutate(proporcao = n / sum(n))
+
+## 10. PARCEIRO
+# Qtde
+df %>%
+  count(PARCEIRO) %>%
+  arrange(desc(n))
+
+# %
+df %>%
+  count(PARCEIRO) %>%
+  mutate(proporcao = n / sum(n)) %>%
+  arrange(desc(n))
+
+
 
 # Análise da variável TCH REAL (ton/ha)
 df %>% 
@@ -63,6 +221,9 @@ df %>%
     min_TCH_REAL = min(TCH_REAL, na.rm = TRUE),
     max_TCH_REAL = max(TCH_REAL, na.rm = TRUE)
   )
+
+# Resumo das variáveis de interesse
+summary(df)
 
 # Histograma e boxplot de TCH REAL
 ggplot(df, aes(x = TCH_REAL)) +
