@@ -113,7 +113,6 @@ tail(df)
 # Qtde
 df %>%
   count(UNIDADE)
-
 # %
 df %>%
   count(UNIDADE) %>%
@@ -123,7 +122,6 @@ df %>%
 # Qtde
 df %>%
   count(TIPO)
-
 # %
 df %>%
   count(TIPO) %>%
@@ -133,7 +131,6 @@ df %>%
 # Qtde
 df %>%
   count(COD)
-
 # %
 df %>%
   count(COD) %>%
@@ -143,7 +140,6 @@ df %>%
 # Qtde
 df %>%
   count(SECAO)
-
 # %
 df %>%
   count(SECAO) %>%
@@ -153,7 +149,6 @@ df %>%
 # Qtde
 df %>%
   count(TALHAO)
-
 # %
 df %>%
   count(TALHAO) %>%
@@ -163,7 +158,6 @@ df %>%
 # Qtde
 df %>%
   count(ESTAGIO)
-
 # %
 df %>%
   count(ESTAGIO) %>%
@@ -173,7 +167,6 @@ df %>%
 # Qtde
 df %>%
   count(CORTE)
-
 # %
 df %>%
   count(CORTE) %>%
@@ -183,7 +176,6 @@ df %>%
 # Qtde
 df %>%
   count(VARIEDADE)
-
 # %
 df %>%
   count(VARIEDADE) %>%
@@ -193,7 +185,6 @@ df %>%
 # Qtde
 df %>%
   count(MES_COLHEITA)
-
 # %
 df %>%
   count(MES_COLHEITA) %>%
@@ -204,14 +195,13 @@ df %>%
 df %>%
   count(PARCEIRO) %>%
   arrange(desc(n))
-
 # %
 df %>%
   count(PARCEIRO) %>%
   mutate(proporcao = n / sum(n)) %>%
   arrange(desc(n))
 
-
+#parei aqui
 
 # Análise da variável TCH REAL (ton/ha)
 df %>% 
