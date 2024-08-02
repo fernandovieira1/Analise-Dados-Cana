@@ -6,17 +6,17 @@ library(googledrive)
 
 ## 0.2 Importar dados e Criar df ####
 # Definir o caminho local do arquivo
-file_path <- "C:/caminho/para/seu/arquivo.xlsx"
+file_path <- 'C:/caminho/para/seu/arquivo.xlsx'
 
 # Verificar se está em nuvem ou local
-if (dir.exists("/cloud")) {
+if (dir.exists('/cloud')) {
   # Código para RStudio Cloud
   
   # ID do arquivo no Google Drive (extraído do link)
-  file_id <- "13iRzte02t6sh89sCWj4N7D5Y4GBzbEZI"
+  file_id <- '13iRzte02t6sh89sCWj4N7D5Y4GBzbEZI'
   
   # Baixar o arquivo e salvar localmente
-  drive_download(as_id(file_id), path = "arquivo.xlsx", overwrite = TRUE)
+  drive_download(as_id(file_id), path = 'arquivo.xlsx', overwrite = TRUE)
   # Ler o arquivo Excel do caminho atual (onde foi salvo no RStudio Cloud)
   df <- read_excel('arquivo.xlsx', 
                    skip = 1,
@@ -80,7 +80,7 @@ df <- df %>%
 nrow(df) # após a exclusão dos iniciados em p em TON_HA
 
 # 1.3 Formatar colunas ####
-df$SAFRA <- as.Date(as.character(df$SAFRA), format = "%Y")
+df$SAFRA <- as.Date(as.character(df$SAFRA), format = '%Y')
 df$TIPO <- as.factor(df$TIPO)
 df$COD <- as.factor(df$COD)
 df$TALHAO <- as.factor(df$TALHAO)
