@@ -5,8 +5,10 @@ library(tidyverse)
 library(googledrive)
 
 ## 0.2 Importar dados e Criar df ####
+
+# IMPORTANTE
 # Definir o caminho local do arquivo
-file_path <- 'C:/caminho/para/seu/arquivo.xlsx'
+caminho_local <- 'C:/users/ferna/OneDrive/5. Trabalho/Expediente/Ativos/Consultoria/Usina Pedra/Docs Nicolella/4-Dados e documentos/Dados/Usina da Pedra/Historico ATR 2016 - 2023.xlsx'
 
 # Verificar se está em nuvem ou local
 if (dir.exists('/cloud')) {
@@ -27,7 +29,7 @@ if (dir.exists('/cloud')) {
 } else {
   # Código para ambiente local (Windows ou Mac)
   # Ler o arquivo Excel
-  df <- read_excel(file_path, 
+  df <- read_excel(caminho_local, 
                    skip = 1,
                    sheet = 'BASE_2016_2023')
   
@@ -81,10 +83,10 @@ nrow(df) # após a exclusão dos iniciados em p em TON_HA
 # 1.3 Formatar colunas ####
 df$SAFRA <- as.Date(as.character(df$SAFRA), format = '%Y')
 df$TIPO <- as.factor(df$TIPO)
-df$COD <- as.factor(df$COD)
+df$COD <- as.character(df$COD)
 df$TALHAO <- as.factor(df$TALHAO)
 df$ESTAGIO <- as.factor(df$ESTAGIO)
-df$CORTE <- as.factor(df$CORTE)
+df$CORTE <- as.integer(df$CORTE)
 df$VARIEDADE <- as.factor(df$VARIEDADE)
 df$MES_COLHEITA <- as.factor(df$MES_COLHEITA)
 df$TON_HA <- as.double(df$TON_HA)
@@ -339,4 +341,92 @@ moda(df$TON_HA)
 # Quilos por ha
 summary(df$KG_ATR)
 moda(df$KG_ATR)
+
+#### 4. PARECER ####
+
+# 2016 a 2023 (agregado)
+df %>%
+  group_by(PARCEIRO) %>%
+  summarise(soma_PRODUCAO_REAL = mean(PRODUCAO_REAL, na.rm = TRUE),
+            soma_AREA = sum(AREA, na.rm = TRUE),
+            media_TCH_REAL = mean(TCH_REAL, na.rm = TRUE),
+            media_CORTE = mean(CORTE, na.rm = TRUE),
+            produtividade = (soma_PRODUCAO_REAL/soma_AREA)) %>%
+  filter(PARCEIRO == "BERNARDO BIAGI E OUTRO")
+
+# 2016 a 2023 (por safra)
+df %>%
+  filter(SAFRA >= as.Date("2016-01-01") & SAFRA <= as.Date("2023-12-31")) %>%
+  group_by(PARCEIRO, SAFRA) %>%
+  summarise(soma_PRODUCAO_REAL = mean(PRODUCAO_REAL, na.rm = TRUE),
+            soma_AREA = sum(AREA, na.rm = TRUE),
+            media_TCH_REAL = mean(TCH_REAL, na.rm = TRUE),
+            media_CORTE = mean(CORTE, na.rm = TRUE),
+            produtividade = (soma_PRODUCAO_REAL/soma_AREA))
+
+# 2016 a 2023 (por safra e parceiro)
+df %>%
+  filter(SAFRA >= as.Date('2016-01-01') & SAFRA <= as.Date('2023-12-31')) %>%
+  group_by(PARCEIRO, SAFRA) %>%
+  summarise(soma_PRODUCAO_REAL = mean(PRODUCAO_REAL, na.rm = TRUE),
+            soma_AREA = sum(AREA, na.rm = TRUE),
+            media_TCH_REAL = mean(TCH_REAL, na.rm = TRUE),
+            media_CORTE = mean(CORTE, na.rm = TRUE),
+            produtividade = (soma_PRODUCAO_REAL/soma_AREA)) %>%
+  filter(PARCEIRO == "BERNARDO BIAGI E OUTRO")
+
+# 2016 a 2023 (por safra, parceiro e unidade)
+df %>%
+  filter(SAFRA >= as.Date("2016-01-01") & SAFRA <= as.Date("2023-12-31")) %>%
+  filter(PARCEIRO == "BERNARDO BIAGI E OUTRO" & SECAO == '10001 - LAGOINHA') %>%
+  group_by(PARCEIRO, SAFRA) %>%
+  summarise(soma_PRODUCAO_REAL = mean(PRODUCAO_REAL, na.rm = TRUE),
+            soma_AREA = sum(AREA, na.rm = TRUE),
+            media_TCH_REAL = mean(TCH_REAL, na.rm = TRUE),
+            media_CORTE = mean(CORTE, na.rm = TRUE),
+            produtividade = (soma_PRODUCAO_REAL/soma_AREA))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
