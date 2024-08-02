@@ -63,7 +63,6 @@ df <- df %>% rename(COD = CÓD,
 
 # 
 
-
 # 1.2 Remover linhas com texto (chr) da coluna TON_HA ####
 # - A coluna está toda em texto, mas alguns valores claramente são números.
 # Precisamos decobrir quais são de fato character.
