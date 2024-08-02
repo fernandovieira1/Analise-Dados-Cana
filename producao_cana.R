@@ -3,19 +3,46 @@
 library(readxl)
 library(tidyverse)
 library(googledrive)
-#drive_auth()
 
-# ID do arquivo no Google Drive (extraído do link)
-file_id <- "13iRzte02t6sh89sCWj4N7D5Y4GBzbEZI"
+## 0.2 Importar dados e Criar df ####
+# Definir o caminho local do arquivo
+file_path <- "C:/caminho/para/seu/arquivo.xlsx"
 
-# Baixar o arquivo e salvar localmente
-drive_download(as_id(file_id), path = "arquivo.xlsx", overwrite = TRUE)
+# Verificar se está em nuvem ou local
+if (dir.exists("/cloud")) {
+  # Código para RStudio Cloud
+  
+  # ID do arquivo no Google Drive (extraído do link)
+  file_id <- "13iRzte02t6sh89sCWj4N7D5Y4GBzbEZI"
+  
+  # Baixar o arquivo e salvar localmente
+  drive_download(as_id(file_id), path = "arquivo.xlsx", overwrite = TRUE)
+  # Ler o arquivo Excel do caminho atual (onde foi salvo no RStudio Cloud)
+  df <- read_excel('arquivo.xlsx', 
+                   skip = 1,
+                   sheet = 'BASE_2016_2023')
+  # Selecionar colunas específicas e remover outras
+  df <- df %>% select(-c('LAYER MAPA', 'VATR SAFRA', 'NM', 'Layer safra seção'))
+  
+} else {
+  # Código para ambiente local (Windows ou Mac)
+  # Ler o arquivo Excel
+  df <- read_excel(file_path, 
+                   skip = 1,
+                   sheet = 'BASE_2016_2023')
+  
+  # Selecionar colunas específicas e remover outras
+  df <- df %>% select(-c('LAYER MAPA', 'VATR SAFRA', 'NM', 'Layer safra seção'))
+}
 2
-# 0.3 Importar dados e Criar df ####
-df <- read_excel('arquivo.xlsx', 
-                 skip = 1,
-                 sheet = 'BASE_2016_2023')
-df <- df %>% select(-c('LAYER MAPA', 'VATR SAFRA', 'NM', 'Layer safra seção'))
+
+## 0.3 Funções personalizadas ####
+# Moda
+# Função para calcular a moda
+moda <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
 
 #### 1. FORMATAR DF ####
 
@@ -40,9 +67,9 @@ df <- df %>% rename(COD = CÓD,
 # 1.2 Remover linhas com texto (chr) da coluna TON_HA ####
 # - A coluna está toda em texto, mas alguns valores claramente são números.
 # Precisamos decobrir quais são de fato character.
-df %>%
-  group_by(TON_HA) %>%
-  summarise(frequencia = n()) %>% View()
+# df %>%
+#   group_by(TON_HA) %>%
+#   summarise(frequencia = n()) %>% View()
 # Há 4 valores, todos começando com a letra 'p'.
 
 nrow(df) # antes da exclusão dos iniciados em p em TON_HA
@@ -98,6 +125,7 @@ tail(df)
 #### 3. AED ####
 # 3.1 Dados categóricos ####
 
+head(df)
 ## 1. UNIDADE: Nome do local da produção/colheita
 ## 2. TIPO: Tipo de contrato (Parceria ou Arrendamento)
 ## 3. COD: Código da unidade de beneficiamento
@@ -110,6 +138,8 @@ tail(df)
 ## 10. PARCEIRO: Nome do produtor parceiro
 
 ## 1. UNIDADE
+# Nome do local da produção/colheita
+
 # Qtde
 df %>%
   count(UNIDADE)
@@ -119,6 +149,8 @@ df %>%
   mutate(proporcao = n / sum(n))
 
 ## 2. TIPO
+# Tipo de contrato (Parceria ou Arrendamento)
+
 # Qtde
 df %>%
   count(TIPO)
@@ -128,6 +160,8 @@ df %>%
   mutate(proporcao = n / sum(n))
 
 ## 3. COD
+# Código da unidade de beneficiamento
+
 # Qtde
 df %>%
   count(COD)
@@ -137,6 +171,8 @@ df %>%
   mutate(proporcao = n / sum(n))
 
 ## 4. SECAO
+# Unidade de beneficiamento
+
 # Qtde
 df %>%
   count(SECAO)
@@ -146,6 +182,8 @@ df %>%
   mutate(proporcao = n / sum(n))
 
 ## 5. TALHAO
+# Porção de terra onde a cana foi plantada
+
 # Qtde
 df %>%
   count(TALHAO)
@@ -155,6 +193,8 @@ df %>%
   mutate(proporcao = n / sum(n))
 
 ## 6. ESTAGIO
+# (???)
+
 # Qtde
 df %>%
   count(ESTAGIO)
@@ -164,6 +204,8 @@ df %>%
   mutate(proporcao = n / sum(n))
 
 ## 7. CORTE
+# (???)
+
 # Qtde
 df %>%
   count(CORTE)
@@ -173,6 +215,8 @@ df %>%
   mutate(proporcao = n / sum(n))
 
 ## 8. VARIEDADE
+# variedade genética da cana
+
 # Qtde
 df %>%
   count(VARIEDADE)
@@ -182,6 +226,8 @@ df %>%
   mutate(proporcao = n / sum(n))
 
 ## 9. MES_COLHEITA
+# AE
+
 # Qtde
 df %>%
   count(MES_COLHEITA)
@@ -191,6 +237,8 @@ df %>%
   mutate(proporcao = n / sum(n))
 
 ## 10. PARCEIRO
+# Nome do produtor parceiro
+
 # Qtde
 df %>%
   count(PARCEIRO) %>%
@@ -201,114 +249,95 @@ df %>%
   mutate(proporcao = n / sum(n)) %>%
   arrange(desc(n))
 
-#parei aqui
+# 3.2 Dados quantitativos ####
 
-# Análise da variável TCH REAL (ton/ha)
-df %>% 
-  summarise(
-    mean_TCH_REAL = mean(TCH_REAL, na.rm = TRUE),
-    sd_TCH_REAL = sd(TCH_REAL, na.rm = TRUE),
-    min_TCH_REAL = min(TCH_REAL, na.rm = TRUE),
-    max_TCH_REAL = max(TCH_REAL, na.rm = TRUE)
-  )
+head(df)
+## 1. SAFRA: Ano da safra
+## 2. AREA: Tamanho da área plantada (ha)
+## 3. PRODUCAO_REAL: total colheita (kg)
+## 4. TCH_REAL: Tonelada de cana por hectare (kg)
+## 5. ATR: Açúcar Total Recuperável (kg)
+## 6. ATR_PRODUCAO: (PRODUÇÃO REAL*ATR) (kg)
+## 7. DATA_COLHEITA: AE
+## 8. TON_HA: Toneladas por ha
+## 9. KG_ATR: Quilos por ha
 
-# Resumo das variáveis de interesse
-summary(df)
+#Removi histogramas e boxplots, mas podem ser úteis (a ver)
 
-# Histograma e boxplot de TCH REAL
-ggplot(df, aes(x = TCH_REAL)) +
-  geom_histogram(bins = 50, fill = 'blue', alpha = 0.7) +
-  geom_density(color = 'red') +
-  xlim(0, 250)
+## 1. SAFRA
+# Ano da safra
+df %>%
+  count(SAFRA)
+# %
+df %>%
+  count(SAFRA) %>%
+  mutate(proporcao = n / sum(n))
 
-ggplot(df, aes(y = TCH_REAL)) +
-  geom_boxplot(fill = 'blue', alpha = 0.7)
+## 2. AREA
+# Tamanho da área plantada (ha)
+summary(df$AREA)
+moda(df$AREA)
 
-# TCH REAL por SAFRA
 df %>%
   group_by(SAFRA) %>%
-  summarise(mean_TCH_REAL = mean(TCH_REAL, na.rm = TRUE)) %>%
-  ggplot(aes(x = SAFRA, y = mean_TCH_REAL)) +
-  geom_line() +
-  geom_point()
+  summarise(media_area = mean(AREA, na.rm = TRUE),
+            total_area = sum(AREA, na.rm = TRUE))
 
-# Análise da variável ATR (kg)
-df %>% 
-  summarise(
-    mean_ATR = mean(ATR, na.rm = TRUE),
-    sd_ATR = sd(ATR, na.rm = TRUE),
-    min_ATR = min(ATR, na.rm = TRUE),
-    max_ATR = max(ATR, na.rm = TRUE)
-  )
+## 3. PRODUCAO_REAL
+# total colheita (kg)
+summary(df$PRODUCAO_REAL)
+moda(df$PRODUCAO_REAL)
 
-# Histograma e boxplot de ATR
-ggplot(df, aes(x = ATR)) +
-  geom_histogram(bins = 50, fill = 'green', alpha = 0.7) +
-  geom_density(color = 'red')
+df %>%
+  group_by(TIPO) %>%
+  summarise(media_prodReal_tipo = mean(PRODUCAO_REAL, na.rm = TRUE),
+            soma_prodReal_tipo = sum(PRODUCAO_REAL, na.rm = TRUE))
 
-ggplot(df, aes(y = ATR)) +
-  geom_boxplot(fill = 'green', alpha = 0.7)
+## 4. TCH_REAL
+# Tonelada de cana por hectare (kg)
+summary(df$TCH_REAL)
+moda(df$TCH_REAL)
 
-# ATR por SAFRA
 df %>%
   group_by(SAFRA) %>%
-  summarise(mean_ATR = mean(ATR, na.rm = TRUE)) %>%
-  ggplot(aes(x = SAFRA, y = mean_ATR)) +
-  geom_line() +
-  geom_point()
+  summarise(media_area = mean(AREA, na.rm = TRUE),
+            total_area = sum(AREA, na.rm = TRUE))
 
-# Análise da variável ATR * PRODUÇÃO (kg)
-df %>% 
-  summarise(
-    mean_ATR_PRODUCAO = mean(ATR_PRODUCAO, na.rm = TRUE),
-    sd_ATR_PRODUCAO = sd(ATR_PRODUCAO, na.rm = TRUE),
-    min_ATR_PRODUCAO = min(ATR_PRODUCAO, na.rm = TRUE),
-    max_ATR_PRODUCAO = max(ATR_PRODUCAO, na.rm = TRUE)
-  )
+## 5. ATR
+# Açúcar Total Recuperável (kg)
+summary(df$ATR)
+moda(df$ATR)
 
-# Histograma e boxplot de ATR * PRODUÇÃO
-ggplot(df, aes(x = ATR_PRODUCAO)) +
-  geom_histogram(bins = 50, fill = 'purple', alpha = 0.7) +
-  geom_density(color = 'red')
-
-ggplot(df, aes(y = ATR_PRODUCAO)) +
-  geom_boxplot(fill = 'purple', alpha = 0.7)
-
-# ATR * PRODUÇÃO por SAFRA
 df %>%
   group_by(SAFRA) %>%
-  summarise(mean_ATR_PRODUCAO = mean(ATR_PRODUCAO, na.rm = TRUE)) %>%
-  ggplot(aes(x = SAFRA, y = mean_ATR_PRODUCAO)) +
-  geom_line() +
-  geom_point()
+  summarise(media_ATR = mean(ATR, na.rm = TRUE),
+            total_ATR = sum(ATR, na.rm = TRUE))
 
-# Resumo final
-# Mudar para dbl
-df %>% 
-  summarise(
-    mean_TON_HA = mean(TON_HA, na.rm = TRUE),
-    sd_TON_HA = sd(TON_HA, na.rm = TRUE),
-    min_TON_HA = min(TON_HA, na.rm = TRUE),
-    max_TON_HA = max(TON_HA, na.rm = TRUE),
-    mean_KG_ATR = mean(TON_HA, na.rm = TRUE),
-    sd_KG_ATR = sd(TON_HA, na.rm = TRUE),
-    min_KG_ATR = min(TON_HA, na.rm = TRUE),
-    max_KG_ATR = max(TON_HA, na.rm = TRUE)
-  )
+df %>%
+  group_by(PARCEIRO) %>%
+  summarise(media_ATR = mean(ATR, na.rm = TRUE),
+            total_ATR = sum(ATR, na.rm = TRUE))
 
-# Histograma e boxplot de TON/HÁ e KG ATR
-ggplot(df, aes(x = TON_HA)) +
-  geom_histogram(bins = 50, fill = 'orange', alpha = 0.7) +
-  geom_density(color = 'red')
+## 6. ATR_PRODUCAO
+# (PRODUÇÃO REAL*ATR) (kg)
+summary(df$ATR_PRODUCAO)
+moda(df$ATR_PRODUCAO)
 
-ggplot(df, aes(y = TON_HA)) +
-  geom_boxplot(fill = 'orange', alpha = 0.7)
 
-ggplot(df, aes(x = KG_ATR)) +
-  geom_histogram(bins = 50, fill = 'pink', alpha = 0.7) +
-  geom_density(color = 'red')
+## 7. DATA_COLHEITA
+# AE
 
-ggplot(df, aes(y = KG_ATR)) +
-  geom_boxplot(fill = 'pink', alpha = 0.7)
+# - Ignorarei esta informação por enquanto, 
+# considerando que fizemos a análise do mês da colheita em coluna especifica.
 
-# config cloud
+
+## 8. TON_HA
+# Toneladas por ha
+summary(df$TON_HA)
+moda(df$TON_HA)
+
+## 9. KG_ATR
+# Quilos por ha
+summary(df$KG_ATR)
+moda(df$KG_ATR)
+
