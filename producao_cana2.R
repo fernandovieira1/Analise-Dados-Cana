@@ -17,8 +17,6 @@ library(viridis)
 # Definir o caminho local do arquivo
 caminho_local <- 'C:/users/ferna/OneDrive/5. Trabalho/Expediente/Ativos/Consultoria/Usina Pedra/Docs Nicolella/4-Dados e documentos/Dados/Usina da Pedra/Historico ATR 2016 - 2023.xlsx'
 
-
-
 # Verificar se está em nuvem ou local
 if (dir.exists('/cloud')) {
   # Código para RStudio Cloud
@@ -237,7 +235,7 @@ resumo_cont_3 <-resumo_cont %>%
 
 
 ## Duas variáveis são importantes aqui. A primeira é o pagamento que é a produção fixa paga 
-## vezes o ATR em contrato. Essa seia opagamento recebido. 
+## vezes o ATR em contrato. Essa seria o pagamento recebido. 
 ## A segunda é o pagamento pleno que é um percentual da produção de ATR por ha
 ## OU seja, produçãoxATR vezes um percentual. Essa chamaremos de pag_pleno_ha
 ## o percentual foi estabelecido com base no valor da tonelada paga atualmente pela usina. 
