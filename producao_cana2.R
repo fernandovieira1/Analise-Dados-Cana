@@ -477,7 +477,7 @@ bp_produt + labs(title="Produtividade dos Contratos",
 
 
 
-## 4.4.2 Análise do ATR
+## 4.4.2 Análise do ATR ####
 
 ## ATR medio por contrato
 ## Aqui estamos analisando a quantidade de atr produzido por ha, em kg.
@@ -552,7 +552,7 @@ resumo_cont_f %>%
 
 
 
-## 5. Simulando recebido e quanto receberia na parceria plena
+## 5. Simulando recebido e quanto receberia na parceria plena ####
 
 
 
@@ -618,7 +618,13 @@ resumo_cont_f %>%
 114/219
 
 
+## Dúvidas Fernando ####
 
+## Valores pagos a mais ou a menos ao parceiro?
+sum(subset(resumo_cont_f$dif_pag, resumo_cont_f$dif_pag>0)) # a mais
+sum(subset(resumo_cont_f$dif_pag, resumo_cont_f$dif_pag<0)) # a menos
+sum(subset(resumo_cont_f$dif_pag, resumo_cont_f$dif_pag>0))+ 
+  sum(subset(resumo_cont_f$dif_pag, resumo_cont_f$dif_pag<0)) # diferença
 
 
 
