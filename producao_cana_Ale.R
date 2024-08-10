@@ -2,32 +2,46 @@
 # 0.1 Carregar pacotes necessários ####
 library(readxl)
 library(tidyverse)
-library(dplyr)
 library(googledrive)
 library(summarytools)
 library(kableExtra)
 library(psych)
 library(officer)
-library(ggplot2)
 library(ggcorrplot)
 library(hrbrthemes)
 library(viridis)
 
+## 0.2 Importar dados e Criar df ####
+
+# IMPORTANTE
 # Definir o caminho local do arquivo
-caminho_local <- 'C:/Users/Alexandre_Nicolella/Projetos/Em andamento/Usina Pedra/4-Dados e documentos/Dados/Usina da Pedra/historico16_23.xlsx'
+caminho_local <- 'C:/users/ferna/OneDrive/CAMINHO/arquivo_tal.xlsx'
 
-# 1. LEITURA DO ARQUIVO  DO EXCEL
-  df <- read_excel(caminho_local, 
-                   #skip = 1, 
+# Verificar se está em nuvem ou local
+if (dir.exists('/cloud')) {
+  # Código para RStudio Cloud
+  
+  # ID do arquivo no Google Drive (PESQUISAR -- extraído do link)
+  file_id <- '13iRzte02t6sh89sCWj4N7D5Y4GBzbEZI'
+  
+  # Baixar o arquivo e salvar localmente
+  drive_download(as_id(file_id), path = 'arquivo.xlsx', overwrite = TRUE)
+  # Ler o arquivo Excel do caminho atual (onde foi salvo no RStudio Cloud)
+  df <- read_excel('arquivo.xlsx', 
+                   skip = 1,
                    sheet = 'BASE_2016_2023')
-## Observacoes importantes
-  ## 1.1: Retiramos os talhoes com menos de 5 ha
-  ## 1.2: Com base no TCH real retiramos os 5% maiores e menores valores.Existima valores acima de 1.000 o que seguramente está errado 
-  ## Com isso diminuimos os erros de medidas
-    
+  
+} else {
+  # Código para ambiente local (Windows ou Mac)
+  # Ler o arquivo Excel
+  df <- read_excel(caminho_local, 
+                   skip = 1,
+                   sheet = 'PLANILHA_TAL')
+}
+1
 
-## 2.  FUNCOES PERSONILIZADAS
-# 2.1 Moda
+## 0.3 Funções personalizadas ####
+# Moda
 # Função para calcular a moda
 moda <- function(v) {
   uniqv <- unique(v)
@@ -39,7 +53,7 @@ moda <- function(v) {
 # 3.1 Renomear colunas todas em minúscula
 names(df)
 df <- df %>% rename(safra=SAFRA,
-                    layer_mapa=LAYER_MAPA,
+                    layer_mapa=`LAYER MAPA`,
                     unidade=UNIDADE,
                     tipo=TIPO,
                     nm=NM,
@@ -218,6 +232,7 @@ filter(contrato != "30669 - JOSE MARCIO CAVALHEIRE")
 # Vamos retirar esse contrato, mais de 100 TCH no 8o corte e sempre subindo
 
 
+## AQUI É PONTO MAIS IMPORTANTE DA ANÁLISE \!
 ## Duas variáveis são importantes aqui. A primeira é o pagamento que é a produção fixa paga 
 ## vezes o ATR em contrato. Essa seia opagamento recebido. 
 ## A segunda é o pagamento pleno que é um percentual da produção de ATR por ha
@@ -272,7 +287,7 @@ df_contrato_17<-df %>%
             av_atr = mean(atr, na.rm = TRUE),
             sum_atrxprod = sum(atrxproducao, na.rm = TRUE),
             av_mes_colheita = mean(mes_colheita),
-            m_mes_colheita = mean(mes_colheita),
+            m_mes_colheita = moda(mes_colheita),
             av_t_ha = mean(t_ha, na.rm = TRUE),
             av_kg_atr = mean(kg_atr, na.rm = TRUE),
             av_vatr_safra = mean(vatr_safra, na.rm = TRUE)
