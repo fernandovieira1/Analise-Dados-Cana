@@ -15,7 +15,7 @@ library(viridis)
 
 # IMPORTANTE
 # Definir o caminho local do arquivo
-caminho_local <- 'C:/users/ferna/OneDrive/CAMINHO/arquivo_tal.xlsx'
+caminho_local <- 'C:\\Users\\ferna\\OneDrive\\5. Trabalho\\Expediente\\Ativos\\Consultoria\\Usina Pedra\\Docs Nicolella\\4-Dados e documentos\\Dados\\Usina da Pedra\\Historico de encerrados 2016 - 2023.xlsx'
 
 # Verificar se está em nuvem ou local
 if (dir.exists('/cloud')) {
@@ -36,7 +36,7 @@ if (dir.exists('/cloud')) {
   # Ler o arquivo Excel
   df <- read_excel(caminho_local, 
                    skip = 1,
-                   sheet = 'PLANILHA_TAL')
+                   sheet = 'BASE_2016_2023')
 }
 1
 
@@ -233,13 +233,18 @@ filter(contrato != "30669 - JOSE MARCIO CAVALHEIRE")
 
 
 ## AQUI É PONTO MAIS IMPORTANTE DA ANÁLISE \!
-## Duas variáveis são importantes aqui. A primeira é o pagamento que é a produção fixa paga 
-## vezes o ATR em contrato. Essa seia opagamento recebido. 
-## A segunda é o pagamento pleno que é um percentual da produção de ATR por ha
-## OU seja, produçãoxATR vezes um percentual. Essa chamaremos de pag_pleno_ha
+## - Duas variáveis são importantes aqui. 
+## - A primeira é o pagamento, que é a produção fixa paga 
+## vezes o ATR em contrato <<sum_atrxprod>>. Essa seria opagamento recebido. 
+## - A segunda é o pagamento pleno que é um percentual da produção de ATR por ha
+## OU seja, produçãoxATR vezes um percentual. Essa chamaremos de <<pag_pleno_ha>>
 ## o percentual foi estabelecido com base no valor da tonelada paga atualmente pela usina. 
 ## EX.: Aqueles que recebem 19 ton/ha ou menos ficará com percentual de 19%
-## aqueles entre 19 e 23 receberao 24% ..... e assim por diante. 
+## aqueles entre 19 e 23 receberao 24% ..... e assim por diante.
+## - Logo: 
+##        * <<sum_atrxprod>> = 
+##        * <<atr_prod_ha>> = produtividade*av_atr 
+##        * <<av_atr>> = mean(av_atr)
 
 resumo_cont_3<-resumo_cont_3 %>%
   mutate(atr_prod_ha=produtividade*av_atr)
@@ -252,7 +257,6 @@ resumo_cont_3<-resumo_cont_3 %>%
                            av_t_ha >= 19 & av_t_ha < 23 ~ 0.24,
                            av_t_ha >= 23 & av_t_ha < 27 ~ 0.29,
                            av_t_ha >= 27 ~ 0.34)) 
-
 
 
 resumo_cont_3<-resumo_cont_3 %>%
