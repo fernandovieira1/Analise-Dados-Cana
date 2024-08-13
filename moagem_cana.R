@@ -81,3 +81,6 @@ summary(df)
 table(df$mes)
 table(df$unidade)
 table(df$tipo_propriedade)
+
+# tc por mês e por tipo de propriedade
+
