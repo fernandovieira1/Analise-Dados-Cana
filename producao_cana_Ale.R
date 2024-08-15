@@ -242,9 +242,10 @@ filter(contrato != "30669 - JOSE MARCIO CAVALHEIRE")
 ## EX.: Aqueles que recebem 19 ton/ha ou menos ficará com percentual de 19%
 ## aqueles entre 19 e 23 receberao 24% ..... e assim por diante.
 ## - Logo: 
-##        * <<sum_atrxprod>> = 
-##        * <<atr_prod_ha>> = produtividade*av_atr 
+##        * <<sum_atrxprod>> 
 ##        * <<av_atr>> = mean(av_atr)
+##        * <<atr_prod_ha>> = produtividade*av_atr 
+##        * <<pag_pleno_ha>> = atr_prod_ha*pleno
 
 resumo_cont_3<-resumo_cont_3 %>%
   mutate(atr_prod_ha=produtividade*av_atr)
@@ -257,6 +258,7 @@ resumo_cont_3<-resumo_cont_3 %>%
                            av_t_ha >= 19 & av_t_ha < 23 ~ 0.24,
                            av_t_ha >= 23 & av_t_ha < 27 ~ 0.29,
                            av_t_ha >= 27 ~ 0.34)) 
+# Estes valores são um padrão técnico???
 
 
 resumo_cont_3<-resumo_cont_3 %>%
