@@ -15,7 +15,7 @@ library(viridis)
 
 # IMPORTANTE
 # Definir o caminho local do arquivo
-caminho_local <- 'C:/users/ferna/OneDrive/CAMINHO/arquivo_tal.xlsx'
+caminho_local <- 'C:\\Users\\ferna\\OneDrive\\5. Trabalho\\Expediente\\Ativos\\Consultoria\\Usina Pedra\\Docs Nicolella\\4-Dados e documentos\\Dados\\Usina da Pedra\\Historico de Moagem 2016 - 2023.xlsx'
 
 # Verificar se está em nuvem ou local
 if (dir.exists('/cloud')) {
@@ -82,5 +82,61 @@ table(df$mes)
 table(df$unidade)
 table(df$tipo_propriedade)
 
-# tc por mês e por tipo de propriedade
+# TC por mes e por tipo_propriedade
+resumo_tc_mes_tipoProp <- df %>%
+  group_by(TC, mes, tipo_propriedade)
 
+resumo_tc_mes_tipoProp
+
+summary(resumo_tc_mes_tipoProp)
+table(resumo_tc_mes_tipoProp$mes)
+table(resumo_tc_mes_tipoProp$unidade)
+table(resumo_tc_mes_tipoProp$tipo_propriedade)
+
+# Produção TC por unidade
+ggplot(resumo_tc_mes_tipoProp, aes(x = unidade, y = TC, fill = unidade)) +
+  geom_bar(stat = 'identity') +
+  scale_fill_manual(values = c('#4D4D4D', '#737373', '#A6A6A6', '#CCCCCC', '#E6E6E6')) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(title = 'Soma de TC por Unidade',
+       x = 'Unidade',
+       y = 'TC (Toneladas de Cana)') +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = 'bold'),
+    axis.title.x = element_text(face = 'bold'),
+    axis.title.y = element_text(face = 'bold'),
+    legend.position = 'none'
+  )
+
+# Produção TC por mes e por tipo_propriedade
+ggplot(resumo_tc_mes_tipoProp, aes(x = mes, y = TC, fill = tipo_propriedade)) +
+  geom_bar(stat = 'identity', position = 'dodge') +
+  scale_fill_manual(values = c('#4D4D4D', '#737373', '#A6A6A6', '#CCCCCC', '#E6E6E6')) +
+  facet_wrap(~ tipo_propriedade, ncol = 1) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(title = 'Distribuição de TC por Mês e Tipo de Propriedade',
+       x = 'Mês',
+       y = 'TC (Toneladas de Cana)') +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = 'bold'),
+    axis.title.x = element_text(face = 'bold'),
+    axis.title.y = element_text(face = 'bold')
+  )
+
+# Distribuição de TC por unidade 
+ggplot(resumo_tc_mes_tipoProp, aes(x = unidade, y = TC, fill = unidade)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  scale_fill_manual(values = c("#4D4D4D", "#737373", "#A6A6A6", "#CCCCCC", "#E6E6E6")) +
+  scale_y_continuous(labels = scales::comma) +  # Formata o eixo y com separadores de milhares
+  labs(title = "Distribuição de TC por Unidade",
+       x = "Unidade",
+       y = "TC (Toneladas de Cana)") +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.title.x = element_text(face = "bold"),
+    axis.title.y = element_text(face = "bold"),
+    legend.position = "none"
+  )
